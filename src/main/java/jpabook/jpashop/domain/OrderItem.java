@@ -43,7 +43,7 @@ public class OrderItem {
     //비즈니스 로직
     //주문 취소
     public void cancel() {
-        getItem().removeStock(count);
+        getItem().addStock(count);
     }
 
     //주문 상품 전체 가격 조회
