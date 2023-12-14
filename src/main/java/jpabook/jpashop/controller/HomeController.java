@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -44,6 +46,13 @@ public class HomeController {
         memberService.join(member);
 
         return "redirect:/";
+    }
+
+    @GetMapping("/members")
+    public String findMembers(Model model) {
+        List<Member> memberList = memberService.findAll();
+        model.addAttribute("members", memberList);
+        return "members/memberList";
     }
 
 }
