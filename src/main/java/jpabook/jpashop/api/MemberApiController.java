@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @RestController // -> @Controller + @ResponseBody
 public class MemberApiController {
@@ -38,6 +41,37 @@ public class MemberApiController {
         Member member = memberService.findOne(id);
 
         return new UpdateMemberResponse(member.getId(), member.getName());
+    }
+
+    //조회를 할때 List에 엔티티를 전부 넘겨주게 되면 json object타입으로 들어가지 않고 배열 타입으로 반환되기 때문에
+    //확장 가능성이 없고 유지보수에 불리함.
+    //이를 해결하기 위해 마찬가지로 dto로 넘겨주면 된다.
+    @GetMapping("/api/v1/members")
+    public List<Member> findV1() {
+        return memberService.findAll();
+    }
+
+    @GetMapping("/api/v2/members")
+    public Result findV2() {
+        List<Member> memberList = memberService.findAll();
+        List<MemberDto> collect = memberList.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+
+        return new Result(collect.size(), collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private int count;
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
     }
 
     @Data
